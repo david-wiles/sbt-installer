@@ -1,0 +1,5 @@
+.gitignore
+.bsp
+target
+project/project
+project/target
