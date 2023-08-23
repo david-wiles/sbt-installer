@@ -1,0 +1,7 @@
+# check that all files get created
+> clean
+> install
+$ exists target/scala-2.12/foo.jar
+$ exists opt/lib/jar.jar
+$ exists opt/conf
+$ exists bin/unix-user-test

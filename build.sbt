@@ -6,6 +6,7 @@ lazy val root = (project in file("."))
   .settings(
     version := "0.1.0-SNAPSHOT",
     name := "sbt-installer",
+    libraryDependencies += "com.eed3si9n" % "sbt-assembly" % "2.1.1",
     pluginCrossBuild / sbtVersion := {
       scalaBinaryVersion.value match {
         case "2.12" => "1.2.8" // set minimum sbt version

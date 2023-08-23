@@ -20,7 +20,8 @@ object InstallerPlugin extends AutoPlugin {
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
     install := {
       val executable = (install / installExecutableLocation).value / (install / installExecutable).value
-      Installer(executable, (install / installLocation).value, (assembly / assemblyOutputPath).value)
+      val location = (install / installLocation).value / (install / installExecutable).value
+      Installer(executable, location, (assembly / assemblyOutputPath).value)
     },
     install / installExecutable := name.value,
     install / installExecutableLocation := new File("/usr/local/bin"),
