@@ -23,6 +23,7 @@ object InstallerPlugin extends AutoPlugin {
       val location = (install / installLocation).value / (install / installExecutable).value
       Installer(executable, location, (assembly / assemblyOutputPath).value)
     },
+    install := install.dependsOn(sbtassembly.Assembly.assemblyTask(assembly)).value,
     install / installExecutable := name.value,
     install / installExecutableLocation := new File("/usr/local/bin"),
     install / installLocation := new File(s"/opt/${(install / installExecutable).value}")

@@ -2,6 +2,6 @@
 > clean
 > install
 $ exists target/scala-2.12/foo.jar
-$ exists opt/lib/jar.jar
-$ exists opt/conf
+$ exists opt/unix-user-test/lib/foo.jar
+$ exists opt/unix-user-test/conf
 $ exists bin/unix-user-test
