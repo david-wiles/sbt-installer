@@ -1,5 +1,6 @@
 package net.davidwiles.sbt.installer.common
 
+import net.davidwiles.sbt.installer.common.InstallerError._
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
@@ -55,8 +56,9 @@ class Tar(tarball: File) {
   def extract(to: Path): Either[InstallerError, Path] = {
     Try(to.toFile.isDirectory) match {
       case Failure(se: SecurityException) => Left(InsufficientPermissions(s"Unable to open ${to.toAbsolutePath}"))
-      case Failure(ex: Throwable)         => Left(CaughtException(ex))
-      case Success(false)                 => Left(InvalidFileError(to, s"${to.toAbsolutePath} must be a directory"))
+      case Failure(ex: Throwable) =>
+        Left(CaughtException(ex, s"Unable to verify if ${to.toAbsolutePath} is a directory"))
+      case Success(false) => Left(InvalidFileError(to, s"${to.toAbsolutePath} must be a directory"))
       case Success(true) =>
         entries.map { case (stream, entry) =>
           Try {

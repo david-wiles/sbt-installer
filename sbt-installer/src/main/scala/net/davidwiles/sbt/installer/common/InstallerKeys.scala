@@ -1,8 +1,6 @@
 package net.davidwiles.sbt.installer.common
 
-import sbt._
-
-import java.io.File
+import sbt.*
 
 trait InstallerKeys {
 
@@ -13,6 +11,12 @@ trait InstallerKeys {
   lazy val installExecutableLocation = settingKey[File]("Parent directory for the installed executable file")
 
   lazy val installLocation = settingKey[File]("Parent directory for any installed files")
+
+  lazy val baseInstallSettings: Seq[Def.Setting[_]] = Seq(
+    installExecutableName     := sbt.Keys.name.value,
+    installExecutableLocation := Environment.getDefaultExecutableRoot.toFile,
+    installLocation           := Environment.getDefaultInstallRoot.toFile
+  )
 
 }
 

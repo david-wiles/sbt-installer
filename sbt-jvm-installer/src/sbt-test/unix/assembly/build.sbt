@@ -1,5 +1,5 @@
 lazy val root = (project in file("."))
-  .enablePlugins(JavaAppPackaging, InstallerPlugin)
+  .enablePlugins(AssemblyPlugin, AssemblyInstallerPlugin)
   .settings(
     name := "unix-user-test",
     version := "0.1",

@@ -1,20 +1,18 @@
 package net.davidwiles.sbt.installer.unix
 
-import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.*
-import net.davidwiles.sbt.installer.common.InstallerError
-import net.davidwiles.sbt.installer.common.InstallerFailure
+import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport._
+import net.davidwiles.sbt.installer.common.InstallerError._
 import net.davidwiles.sbt.installer.common.Tar
-import net.davidwiles.sbt.installer.common.InstallerKeys.*
+import net.davidwiles.sbt.installer.common.InstallerKeys._
 import sbt.Def
 import sbt.File
 import sbt.Task
 import sbt.TaskKey
 import sbt.Def.Initialize
-import sbt.Keys.*
+import sbt.Keys._
 import sbt.util.Level
 
 import java.nio.file.Files
-import java.nio.file.Path
 import scala.util.Try
 
 object TarballInstaller {
@@ -60,22 +58,17 @@ object TarballInstaller {
       binPath = output.resolve("bin").resolve(name).toAbsolutePath
       _ <- Try(binPath.toFile.setExecutable(true)).map { _ =>
              logger.log(Level.Debug, s"Set executable bit on $binPath")
-           }.toEither.left.map(InstallerError(_))
+           }.toError(s"Failed to set executable bit on $binPath")
       _ <- Try(Files.deleteIfExists(exePath)).map {
              case true  => logger.log(Level.Debug, s"Deleted existing symlink at $exeRoot")
              case false => logger.log(Level.Debug, s"No existing symlink at $exeRoot")
-           }.toEither.left.map(InstallerError(_))
-      _ <- InstallerError.checkDirectory(binPath.getParent)
-      _ <- InstallerError.checkDirectory(exeRoot.toPath)
-      exe <- Try {
-               Files.createSymbolicLink(
-                 exePath, // link
-                 binPath  // target
-               )
-             }.map { exe =>
+           }.toError(s"Failed to delete existing symlink at $exeRoot")
+      _ <- checkDirectory(binPath.getParent)
+      _ <- checkDirectory(exeRoot.toPath)
+      exe <- Try(Files.createSymbolicLink(exePath, binPath)).map { exe =>
                logger.log(Level.Debug, s"Created symlink $exe")
                exe
-             }.toEither.left.map(InstallerError(_))
+             }.toError(s"Failed to create symlink $exePath")
     } yield exe
 
     result.fold(
