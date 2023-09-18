@@ -1,12 +1,19 @@
 package net.davidwiles.sbt.installer.common
 
-import org.apache.commons.compress.archivers.tar.{TarArchiveEntry, TarArchiveInputStream}
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.utils.IOUtils
 
-import java.io.{BufferedInputStream, File, FileInputStream, FileOutputStream}
-import java.nio.file.{Files, Path}
-import scala.util.{Failure, Success, Try}
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 
 class Tar(tarball: File) {
 
@@ -30,18 +37,10 @@ class Tar(tarball: File) {
         )
       )
     }.map { stream =>
-      new Iterator[TarArchiveStreamEntry] {
-        private var current = Option(stream.getNextTarEntry)
-
-        override def hasNext: Boolean = current.nonEmpty
-
-        override def next(): TarArchiveStreamEntry = {
-          val tmp = current.get
-          current = Option(stream.getNextTarEntry)
-          (stream, tmp)
-        }
-
-      }
+      Iterator
+        .continually(stream.getNextTarEntry)
+        .takeWhile(_ != null)
+        .map(entry => (stream, entry))
     }.getOrElse(Iterator.empty)
 
   /** Extract the tarball to the given location, preserving the directory structure present in the archive file. If `to`
@@ -71,8 +70,17 @@ class Tar(tarball: File) {
           }
         }.collectFirst { case Failure(exception) => exception }
           .map(ex => Left(UnsuccessfulUntarError(ex)))
-          .getOrElse(Right(to.resolve(tarball.getName)))
+          .getOrElse(Right(to.resolve(trimExtension(tarball.getName))))
     }
+  }
+
+  // Remove the extension from the filename by removing the section of the filename after the last dot
+  private def trimExtension(filename: String): String = {
+    val lastDot = filename.lastIndexOf('.')
+    if (lastDot > 0 && lastDot < (filename.length - 1))
+      filename.substring(0, lastDot)
+    else
+      filename
   }
 
 }

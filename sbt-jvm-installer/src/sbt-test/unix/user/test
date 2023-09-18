@@ -1,7 +1,8 @@
 # check that all files get created
+$ mkdir opt
+$ mkdir bin
 > clean
 > install
-$ exists target/scala-2.12/foo.jar
-$ exists opt/unix-user-test/lib/foo.jar
-$ exists opt/unix-user-test/conf
+$ exists opt/unix-user-test-0.1/lib
+$ exists opt/unix-user-test-0.1/bin
 $ exists bin/unix-user-test
