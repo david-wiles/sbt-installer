@@ -1,0 +1,8 @@
+# check that all files get created
+$ mkdir opt
+$ mkdir bin
+> clean
+> install
+$ exists target/scala-2.12/unix-user-test-opt/main.js
+$ exists opt/unix-user-test-0.1.js
+$ exists bin/unix-user-test
