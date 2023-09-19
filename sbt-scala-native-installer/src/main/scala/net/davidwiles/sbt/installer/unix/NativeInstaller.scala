@@ -57,6 +57,9 @@ object NativeInstaller {
       _ <- Try(Files.copy(binary.toPath, destination, COPY_ATTRIBUTES, REPLACE_EXISTING)).map { _ =>
              logger.log(Level.Debug, s"Copied ${binary.toPath} to $destination")
            }.toError(s"Failed to copy ${binary.toPath} to $destination")
+      _ <- Try(Files.deleteIfExists(link)).map { removed =>
+             logger.log(Level.Debug, s"Removing existing file at $link: $removed")
+           }.toError(s"Failed to remove existing file at $link")
       executable <- Try(Files.createSymbolicLink(link, destination)).map { exe =>
                       logger.log(Level.Debug, s"Created symlink $exe")
                       exe
