@@ -1,3 +1,5 @@
+import sbt.Test
+
 val scriptedOpts = Def.setting(
   Seq(
     "-Xmx1024M",
@@ -27,18 +29,16 @@ inThisBuild(
       )
     ),
     scalafmtOnCompile := true,
-    version := {
-      val base = "0.1.0"
-      if ((ThisBuild / isSnapshot).value) s"$base-SNAPSHOT"
-      else base
-    },
     pomIncludeRepository := { _ => false },
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if ((ThisBuild / isSnapshot).value) Some("snapshots" at nexus + "content/repositories/snapshots")
-      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
-    publishMavenStyle := true,
+    sonatypeCredentialHost := "s01.oss.sonatype.org",
+    sonatypeRepository := "https://s01.oss.sonatype.org/service/local",
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/david-wiles/sbt-installer"),
+        "git@github.com:david-wiles/sbt-installer.git"
+      )
+    ),
+    licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     Test / publishArtifact := false,
   )
 )
@@ -46,6 +46,7 @@ inThisBuild(
 lazy val common = (project in file("sbt-installer"))
   .enablePlugins(SbtPlugin)
   .settings(
+    publish / skip := true,
     publish := false,
     libraryDependencies += "org.apache.commons" % "commons-compress" % "1.21",
   )
