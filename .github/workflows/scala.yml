@@ -16,9 +16,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         include:
-          - java: 8
-          - java: 11
-          - java: 17
+          - java: adopt@1.8.0-292
+          - java: adopt@1.11.0-11
+          - java: openjdk@1.17.0
 
     env:
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
         with:
-          java-version: "adopt@1.${{ matrix.java }}"
+          java-version: "${{ matrix.java }}"
       - uses: coursier/cache-action@v5
       - name: Build and test
         shell: bash
