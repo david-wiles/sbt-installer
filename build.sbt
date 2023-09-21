@@ -38,7 +38,7 @@ inThisBuild(
     ),
     version := {
       val old = (ThisBuild / version).value
-      if ((ThisBuild / isSnapshot).value) "installer-SNAPSHOT"
+      if ((ThisBuild / isSnapshot).value) s"$old-SNAPSHOT"
       else old
     },
     licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
