@@ -1,5 +1,3 @@
-import sbt.Test
-
 val scriptedOpts = Def.setting(
   Seq(
     "-Xmx1024M",
