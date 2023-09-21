@@ -16,6 +16,7 @@ inThisBuild(
       "-encoding",
       "utf8"
     ),
+    homepage := Some(url("https://github.com/david-wiles/sbt-installer")),
     isSnapshot := Option(System.getProperty("packaging.isSnapshot")).getOrElse("true").toBoolean,
     organization := "net.davidwiles",
     developers := List(
