@@ -27,18 +27,21 @@ inThisBuild(
       )
     ),
     scalafmtOnCompile := true,
-    version := {
-      val base = "0.1.0"
-      if ((ThisBuild / isSnapshot).value) s"$base-SNAPSHOT"
-      else base
-    },
     pomIncludeRepository := { _ => false },
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if ((ThisBuild / isSnapshot).value) Some("snapshots" at nexus + "content/repositories/snapshots")
-      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    sonatypeCredentialHost := "s01.oss.sonatype.org",
+    sonatypeRepository := "https://s01.oss.sonatype.org/service/local",
+    scmInfo := Some(
+      ScmInfo(
+        url("https://github.com/david-wiles/sbt-installer"),
+        "git@github.com:david-wiles/sbt-installer.git"
+      )
+    ),
+    version := {
+      val old = (ThisBuild / version).value
+      if ((ThisBuild / isSnapshot).value) "installer-SNAPSHOT"
+      else old
     },
-    publishMavenStyle := true,
+    licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     Test / publishArtifact := false,
   )
 )
@@ -46,7 +49,7 @@ inThisBuild(
 lazy val common = (project in file("sbt-installer"))
   .enablePlugins(SbtPlugin)
   .settings(
-    publish := false,
+    moduleName := "sbt-installer-common",
     libraryDependencies += "org.apache.commons" % "commons-compress" % "1.21",
   )
 
@@ -80,7 +83,7 @@ lazy val native = (project in file("sbt-scala-native-installer"))
 
 lazy val root = (project in file("."))
   .settings(pomConsistency2021DraftSettings)
-  .aggregate(jvm, js, native)
+  .aggregate(common, jvm, js, native)
 
 // See https://eed3si9n.com/pom-consistency-for-sbt-plugins
 lazy val pomConsistency2021Draft = settingKey[Boolean]("experimental")
