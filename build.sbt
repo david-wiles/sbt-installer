@@ -36,6 +36,11 @@ inThisBuild(
         "git@github.com:david-wiles/sbt-installer.git"
       )
     ),
+    version := {
+      val old = (ThisBuild / version).value
+      if ((ThisBuild / isSnapshot).value) "installer-SNAPSHOT"
+      else old
+    },
     licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     Test / publishArtifact := false,
   )
@@ -44,8 +49,7 @@ inThisBuild(
 lazy val common = (project in file("sbt-installer"))
   .enablePlugins(SbtPlugin)
   .settings(
-    publish / skip := true,
-    publish := false,
+    moduleName := "sbt-installer-common",
     libraryDependencies += "org.apache.commons" % "commons-compress" % "1.21",
   )
 
@@ -79,7 +83,7 @@ lazy val native = (project in file("sbt-scala-native-installer"))
 
 lazy val root = (project in file("."))
   .settings(pomConsistency2021DraftSettings)
-  .aggregate(jvm, js, native)
+  .aggregate(common, jvm, js, native)
 
 // See https://eed3si9n.com/pom-consistency-for-sbt-plugins
 lazy val pomConsistency2021Draft = settingKey[Boolean]("experimental")
